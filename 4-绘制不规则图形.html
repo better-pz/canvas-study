@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>canvas</title>
+</head>
+<body>
+  <canvas id="canvas" width="500px" height="500px">
+
+  </canvas>
+  <script>
+    // 得到canvas画布
+    const canvas = document.getElementById('canvas')
+
+    let ctx = canvas.getContext("2d")
+    // 创建一个路径
+    ctx.beginPath()
+    // 描述进行路径
+    // ctx.moveTo(100,100)
+    // // 描述行进路径
+    // ctx.lineTo(200,200)
+    // ctx.lineTo(400,100)
+    // ctx.lineTo(380,50)
+    // 封闭路径
+    // ctx.closePath()
+    // 绘制这个不规则的图形
+    ctx.strokeStyle = 'red'
+
+
+        ctx.arc(100,100,100,0,2*Math.PI,true);
+
+        ctx.stroke()
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>canvas</title>
+</head>
+<body>
+  <canvas id="canvas" width="500px" height="500px">
+
+  </canvas>
+  <script>
+    // 得到canvas画布
+    const canvas = document.getElementById('canvas')
+    console.log(canvas)
+
+    // 得到画布的上下文，上下文有两个，2d的上下文和3d的上下文
+    let ctx = canvas.getContext("2d")
+    // 所有的图像的绘制都是通过ctx属性或者是方法设置的,和canvas标签没有关系了
+    // 设置颜色
+    ctx.fillStyle = "pink"
+    // 绘制矩形
+    ctx.fillRect(100,100,200,100)
+    // 定义信号量
+    let left = 200
+   setInterval(function() {
+    //  清除画布,0,0代表从什么位置开始清除,600,600代表清除的宽度和高度
+      ctx.clearRect(0,0,600,600)
+      // 更新信号量
+      left++
+      // 重新绘制
+      ctx.fillRect(left,100,100,100)
+    },10)
+  </script>
+</body>
+</html>

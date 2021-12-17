@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>炫彩小球</title>
+</head>
+
+<body>
+  <canvas id="canvas" width="1500px" height="1500px">
+    <script>
+      // 得到canvas画布
+      const canvas = document.getElementById('canvas')
+      let ctx = canvas.getContext("2d")
+
+      // 球类
+      function Ball(x, y, r) {
+        this.x = x
+        this.y = y
+        // 初始半径
+        this.r = r
+        // 设置随机颜色
+        this.color = getRandom()
+        // 设置行进方向
+        this.dx = parseInt(Math.random() * 10)
+        this.dy = parseInt(Math.random() * 10)
+        ballArr.push(this)
+      }
+      // 渲染小球
+      Ball.prototype.render = function () {
+        ctx.beginPath()
+        ctx.arc(this.x, this.y,this.r, 0, Math.PI * 2, false)
+        ctx.fillStyle = this.color
+        ctx.fill()
+      }
+      Ball.prototype.updated = function() {
+        this.x += this.dx
+        this.y +=this.dy
+        this.r -=0.5
+      }
+      // 监听鼠标移动的过程中创建小球
+      canvas.addEventListener('mousemove', (event) => {
+        new Ball(event.offsetX, event.offsetY,30)
+      })
+      let ballArr = []
+      // 定时器进行动画的渲染和更新
+      // let timer = requestAnimationFrame(rander)
+      // cancelAnimationFrame(timer)
+      setInterval(() => {
+        console.log(ballArr)
+        for (let item of ballArr) {
+          item.render()
+        }
+      }, 50)
+      // 随机颜色
+      function getRandom() {
+        const allType = '0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f'
+        const allTypeArr = allType.split(",")
+        let color = "#"
+        for (let i = 0; i < 6; i++) {
+          const random = parseInt(Math.random() * allTypeArr.length)
+          color += allTypeArr[random]
+        }
+        return color
+      }
+    </script>
+</body>
+
+</html>
