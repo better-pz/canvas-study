@@ -9,7 +9,7 @@
 </head>
 
 <body>
-  <canvas id="canvas" width="1500px" height="1500px">
+  <canvas id="canvas" width="1000px" height="1000px">
     <script>
       // 得到canvas画布
       const canvas = document.getElementById('canvas')
@@ -24,8 +24,8 @@
         // 设置随机颜色
         this.color = getRandom()
         // 设置行进方向
-        this.dx = parseInt(Math.random() * 10)
-        this.dy = parseInt(Math.random() * 10)
+        this.dx = parseInt(Math.random() * 10) -5
+        this.dy = parseInt(Math.random() * 10) -5
         ballArr.push(this)
       }
       // 渲染小球
@@ -38,7 +38,15 @@
       Ball.prototype.updated = function() {
         this.x += this.dx
         this.y +=this.dy
-        this.r -=0.5
+        this.r -=0.6
+        this.r<0 && this.remove()
+      }
+      Ball.prototype.remove = function() {
+        for(let key in ballArr) {
+          if(ballArr[key] === this) {
+            ballArr.splice(key,1)
+          }
+        }
       }
       // 监听鼠标移动的过程中创建小球
       canvas.addEventListener('mousemove', (event) => {
@@ -50,10 +58,14 @@
       // cancelAnimationFrame(timer)
       setInterval(() => {
         console.log(ballArr)
-        for (let item of ballArr) {
-          item.render()
+        // 动画的清屏-更新-渲染
+
+        ctx.clearRect(0,0,canvas.width,canvas.height)
+        for (let key in ballArr) {
+          key && ballArr[key].updated()
+          key && ballArr[key] && ballArr[key].render()
         }
-      }, 50)
+      }, 10)
       // 随机颜色
       function getRandom() {
         const allType = '0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f'
