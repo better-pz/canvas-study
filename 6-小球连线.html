@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    canvas {
+      display: block;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="mycanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('mycanvas')
+    const ctx = canvas.getContext('2d')
+    canvas.width = document.documentElement.clientWidth - 30
+    canvas.height = document.documentElement.clientHeight - 30
+
+    function Ball() {
+      this.color = 'pink'
+      this.x = parseInt(Math.random() * canvas.width)
+      this.y = parseInt(Math.random() * canvas.height)
+      this.r = 10
+      this.dx = parseInt(Math.random() * 10) - 5
+      this.dy = parseInt(Math.random() * 10) - 5
+      ballArr.push(this)
+       // 自己在数组中的位置记录一下
+       this.index = ballArr.length - 1
+    }
+    // 小球渲染
+    Ball.prototype.render = function () {
+      ctx.beginPath()
+      // 透明度
+      ctx.globalAlpha = 1
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false)
+      ctx.fillStyle = this.color
+      ctx.fill()
+
+
+      // 画线的逻辑
+      // 画线只画比自己大的一方
+      for(let key = this.index ;key<ballArr.length;key++  ) {
+        if(Math.abs(ballArr[key].x - this.x)<150 && Math.abs(ballArr[key].y - this.y)<150) {
+          ctx.strokeStyle = "#000"
+          ctx.beginPath()
+          // 线的透明度设置
+          ctx.globalAlpha = 10/Math.sqrt(Math.pow(ballArr[key].x- this.x,2)+ Math.pow(ballArr[key].y-this.y,2))
+          ctx.moveTo(this.x,this.y)
+          ctx.lineTo(ballArr[key].x,ballArr[key].y)
+          ctx.closePath()
+          ctx.stroke()
+        } 
+      }
+    }
+    // 小球更新
+    Ball.prototype.update = function () {
+      ctx.beginPath()
+      // 透明度
+    this.x +=this.dx
+    this.y += this.dy
+    if(this.x<0 || this.x > canvas.width) {
+      this.dx = -this.dx
+    }
+    if(this.y<0 || this.y > canvas.height) {
+      this.dy = -this.dy
+    }
+    }
+    const ballArr = []
+    // 创建20个小球
+    for (let i = 0; i < 20; i++) {
+      new Ball()
+    }
+    setInterval(() => {
+      ctx.clearRect(0,0,canvas.width,canvas.height)
+      for (let i = 0; i < ballArr.length; i++) {
+        // 清除
+       
+        ballArr[i].render()
+        ballArr[i].update()
+      }
+    }, 20)
+
+  </script>
+</body>
+
+</html>
