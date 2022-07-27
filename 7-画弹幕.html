@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <canvas id="mycanvas" width="500px" height="900px"></canvas>
+  <script>
+    const canvas = document.getElementById('mycanvas')
+    const ctx = canvas.getContext('2d')
+
+    ctx.font = '20px Microsoft YaHei';
+    // ctx.fillStyle = '#000000';
+    // ctx.fillText('canvas 绘制文字', x, y);
+    // ctx.clearRect(0, 0, width, height);
+    const barrageList = ['第一条弹幕', '第二条弹幕', '第三条弹幕']
+    const colorArr = ['red', 'pink', '#eee']  // 弹幕数组多对应的颜色数组
+    const numArrL = [500, 550, 590];  // 弹幕数组所对应的x坐标位置数组
+    const numArrT = [400, 200, 300];  // 弹幕数组所对应的y坐标位置数组
+    const speedArr = [2, 2, 1]; // 弹幕数组所对应的弹幕移动速度数组
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      for (j in barrageList) {
+        numArrL[j] -= speedArr[j];
+        ctx.fillStyle = colorArr[j]
+        ctx.fillText(barrageList[j], numArrL[j], numArrT[j]);
+        ctx.restore();
+      }
+    }
+    (function animloop() {
+      render();
+      requestAnimationFrame(animloop);
+    })();
+
+      
+
+
+  </script>
+
+</body>
+
+</html>
