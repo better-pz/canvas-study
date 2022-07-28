@@ -5,44 +5,49 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>zrender学习</title>
+  <style>
+  </style>
 </head>
 
 <body>
-  <canvas id="mycanvas" width="500px" height="900px"></canvas>
+  <script src="./zrender/dist/zrender.js"></script>
+  <div class="example-container"></div>
+
   <script>
-    const canvas = document.getElementById('mycanvas')
-    const ctx = canvas.getContext('2d')
+    window.onload = function () {
+      var container = document.getElementsByClassName('example-container')[0];
+      console.log(container)
+      var zr = zrender.init(container);
+      var w = zr.getWidth();
+      var h = zr.getHeight();
+      var r = 30;
+      var circle = new zrender.Circle({
+        shape: {
+          cx: r,
+          cy: h / 2,
+          r: r
+        },
+        style: {
+          fill: 'transparent',
+          stroke: '#FF6EBE'
+        },
+        silent: true
+      });
+      console.log(container)
 
-    ctx.font = '20px Microsoft YaHei';
-    // ctx.fillStyle = '#000000';
-    // ctx.fillText('canvas 绘制文字', x, y);
-    // ctx.clearRect(0, 0, width, height);
-    const barrageList = ['第一条弹幕', '第二条弹幕', '第三条弹幕']
-    const colorArr = ['red', 'pink', '#eee']  // 弹幕数组多对应的颜色数组
-    const numArrL = [500, 550, 590];  // 弹幕数组所对应的x坐标位置数组
-    const numArrT = [400, 200, 300];  // 弹幕数组所对应的y坐标位置数组
-    const speedArr = [2, 2, 1]; // 弹幕数组所对应的弹幕移动速度数组
-    function render() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.save();
-      for (j in barrageList) {
-        numArrL[j] -= speedArr[j];
-        ctx.fillStyle = colorArr[j]
-        ctx.fillText(barrageList[j], numArrL[j], numArrT[j]);
-        ctx.restore();
-      }
-    }
-    (function animloop() {
-      render();
-      requestAnimationFrame(animloop);
-    })();
+      circle.animate('shape', true)
+        .when(5000, {
+          cx: w - r
+        })
+        .when(10000, {
+          cx: r
+        })
+        .start();
 
-      
-
-
+      zr.add(circle);
+    };
   </script>
-
 </body>
 
 </html>
