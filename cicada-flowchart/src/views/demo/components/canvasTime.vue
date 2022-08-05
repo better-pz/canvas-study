@@ -59,32 +59,32 @@ export default {
     this.ctx = this.canvas.getContext("2d");
     this.canvansW = this.canvas.width;
     this.canVansH = this.canvas.height;
-    var startTime = new Date("2020-07-02 12:40:30").getTime(); //录像块开始日期
-    var endTime = new Date("2020-07-02 10:10:50").getTime(); //录像块结束日期
-    var num = endTime - startTime; //
-    this.timecell = [
-      {
-        beginTime: startTime + num, //通过加上时间差以校准录像块轴中渲染
-        endTime: endTime + num, //通过加上时间差以校准录像块轴中渲染
-        style: {
-          background: this.canvasColors[1],
-        },
-      },
-      {
-        beginTime: new Date().getTime() - 6 * 3600 * 1000,
-        endTime: new Date().getTime() - 4 * 3600 * 1000,
-        style: {
-          background: this.canvasColors[1],
-        },
-      },
-    ];
-    this.init(this.start_timestamp, this.timecell);
+    // var startTime = new Date("2020-07-02 12:40:30").getTime(); //录像块开始日期
+    // var endTime = new Date("2020-07-02 10:10:50").getTime(); //录像块结束日期
+    // var num = endTime - startTime; //
+    // this.timecell = [
+    //   {
+    //     beginTime: startTime + num, //通过加上时间差以校准录像块轴中渲染
+    //     endTime: endTime + num, //通过加上时间差以校准录像块轴中渲染
+    //     style: {
+    //       background: this.canvasColors[1],
+    //     },
+    //   },
+    //   {
+    //     beginTime: new Date().getTime() - 6 * 3600 * 1000,
+    //     endTime: new Date().getTime() - 4 * 3600 * 1000,
+    //     style: {
+    //       background: this.canvasColors[1],
+    //     },
+    //   },
+    // ];
+    this.init(this.start_timestamp);
   },
   methods: {
-    init(start_timestamp, timecell) {
+    init(start_timestamp) {
       this.drawCellBg();
       this.add_graduations(start_timestamp); // 初始时间轴 刻度
-      this.add_cells(timecell);
+      // this.add_cells(timecell);
       this.drawLine(
         0,
         this.canVansH,
@@ -225,23 +225,23 @@ export default {
         this.g_isMousemove = true;
         this.g_mousedownCursor = pos_x;
       } else {
-        let time = this.start_timestamp + pos_x / px_per_ms;
+        // let time = this.start_timestamp + pos_x / px_per_ms;
         this.init(this.start_timestamp, this.timecell);
-        this.drawLine(
-          pos_x,
-          0,
-          pos_x,
-          this.moveLineH + 10,
-          this.moveLineColor,
-          1
-        ); // 鼠标移动的线
-        this.ctx.fillStyle = this.moveLineColor; // 鼠标移动时候的文字
-        // console.log(changeTime(time))
-        this.ctx.fillText(
-          this.changeTime(time),
-          pos_x - 50,
-          this.moveTextH + 10
-        );
+        // this.drawLine(
+        //   pos_x,
+        //   0,
+        //   pos_x,
+        //   this.moveLineH + 10,
+        //   this.moveLineColor,
+        //   1
+        // ); // 鼠标移动的线
+        // this.ctx.fillStyle = this.moveLineColor; // 鼠标移动时候的文字
+        // // console.log(changeTime(time))
+        // this.ctx.fillText(
+        //   this.changeTime(time),
+        //   pos_x - 50,
+        //   this.moveTextH + 10
+        // );
       }
     },
     mouseupFunc(e) {
