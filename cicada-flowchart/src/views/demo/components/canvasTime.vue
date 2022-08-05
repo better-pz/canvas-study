@@ -27,6 +27,7 @@ export default {
       scaleH: 35,
       moveLineH: 60,
       moveTextH: 75,
+      yearLists:[2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022],
       minutes_per_step: [
         1,
         2,
@@ -93,22 +94,22 @@ export default {
         "transparent",
         1
       ); // 时间轴border-bottom底线
-      this.drawLine(
-        this.canvansW / 2,
-        0,
-        this.canvansW / 2,
-        this.moveLineH,
-        this.axisColor,
-        2
-      ); //中间播放点时间线
+      // this.drawLine(
+      //   this.canvansW / 2,
+      //   0,
+      //   this.canvansW / 2,
+      //   this.moveLineH,
+      //   this.axisColor,
+      //   2
+      // ); //中间播放点时间线
       this.add_events();
-      let time = start_timestamp + (this.hours_per_ruler * 3600 * 1000) / 2;
+      // let time = start_timestamp + (this.hours_per_ruler * 3600 * 1000) / 2;
       this.ctx.fillStyle = this.axisColor;
-      this.ctx.fillText(
-        this.changeTime(time),
-        this.canvansW / 2 - 50,
-        this.moveTextH
-      );
+      // this.ctx.fillText(
+      //   this.changeTime(time),
+      //   this.canvansW / 2 - 50,
+      //   this.moveTextH
+      // );
     },
     add_cells(cells) {
       cells.forEach((cell) => {
@@ -151,6 +152,7 @@ export default {
       ); //开始的偏移时间 ms
       let px_offset = ms_offset * px_per_ms; //开始的偏移距离 px
       let ms_per_step = px_per_step / px_per_ms; // ms/step
+      console.log('num_steps',num_steps)
       for (let i = 0; i < num_steps; i++) {
         graduation_left = px_offset + i * px_per_step; // 距离=开始的偏移距离+格数*px/格
         graduation_time = start_timestamp + ms_offset + i * ms_per_step; //时间=左侧开始时间+偏移时间+格数*ms/格
@@ -160,14 +162,16 @@ export default {
           //判断零点
           // caret_class = "big";
           lineH = 35;
-          let big_date = "00:00";
+          // let big_date = "00:00";
           this.ctx.fillStyle = this.fontColor; //  0点 特殊 字体样式
-          this.ctx.fillText(big_date, graduation_left, 50);
+          // this.ctx.fillText(big_date, graduation_left, 50);
         } else if ((graduation_time / (60 * 1000)) % medium_step == 0) {
           // caret_class = "middle";
           lineH = 25;
           let middle_date = this.graduation_title(date);
-          this.ctx.fillText(middle_date, graduation_left - 10, 50);
+          console.log('middle_date',middle_date)
+
+          // this.ctx.fillText(middle_date, graduation_left - 10, 50);
         } else {
           lineH = 15;
         }
