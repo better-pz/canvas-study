@@ -1,0 +1,147 @@
+*{
+  margin:0;
+  padding:0;
+}
+ol{ list-style: none;}
+
+body{
+  overflow: hidden;
+}
+#canvas{
+  display: block;
+  background: #ffffff;
+  margin:0;
+  padding:0;
+  position: fixed;
+  left: 0;
+  right: 0;
+}
+.actions{
+  position: fixed;
+  top: 14px;
+  left: 16px;
+}
+.download{
+  position: fixed;
+  top: 18px;
+  right: 14px;
+}
+#download{
+  width: 2.0em;
+  height: 2.0em;
+}
+.icon {
+  width: 2.5em; height: 2.5em;
+  vertical-align: -0.15em;
+  fill: #f5cac3;
+  overflow: hidden;
+  padding:2px;
+  margin:0 4px;
+  transition: all .3s;
+  cursor:pointer;
+}
+#clear{
+  width:2.2em;
+  height:2.2em;
+  cursor:pointer;
+}
+.actions svg.active{
+  fill:#2b2d42;
+  transform:scale(1.2);
+}
+#colors{
+  position: fixed;
+  top: 90px;
+  left: 18px;
+}
+#colors li{
+  width:16px;
+  height:16px;
+  margin:16px 0;
+  border-radius: 50%;
+  transition: all .2s;
+  cursor:pointer;
+}
+#colors li#black{
+  background:#2d2d2d;
+  border: 1px solid #101010;
+  box-shadow: 0 2px 5px rgba(0,0,0,.6);
+}
+#colors li#red{
+  background:red;
+  border: 1px solid #ca0001;
+  box-shadow: 0 2px 5px rgba(255,0,0,.6);
+}
+#colors li#yellow{
+  background:yellow;
+  border: 1px solid #c7c500;
+  box-shadow: 0 2px 5px  rgba(255,255,0,.6);
+}
+#colors li#green{
+  background:green;
+  border: 1px solid #0d5600;
+  box-shadow: 0 2px 5px  rgba(12,91,26,.6);
+}
+#colors li#blue{
+  background:blue;
+  border: 1px solid #001ba5;
+  box-shadow: 0 2px 5px  rgba(129,95,246,.6);
+}
+#colors li.active{
+  transform:scale(1.4);
+}
+#colors li#black.active{
+  border: 2px solid #101010;
+  box-shadow: 0 3px 6px rgba(0,0,0,.6);
+}
+#colors li#red.active{
+  border: 2px solid #ca0001;
+  box-shadow: 0 3px 6px rgba(255,0,0,.6);
+}
+#colors li#yellow.active{
+  border: 2px solid #c7c500;
+  box-shadow: 0 3px 6px  rgba(255,255,0,.6);
+}
+#colors li#green.active{
+  border: 2px solid #0d5600;
+  box-shadow: 0 3px 6px  rgba(12,91,26,.6);
+}
+#colors li#blue.active{
+  border: 2px solid #001ba5;
+  box-shadow: 0 3px 6px  rgba(129,95,246,.6);
+}
+
+#line{
+  position: fixed;
+  top: 310px;
+  left: 18px;
+}
+#line li{
+  width: 20px;
+  height: 20px;
+  padding: 10px 0;
+  transition: all .2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor:pointer;
+}
+#line li.active{
+  transform:scale(2);
+  padding: 4px 0;
+}
+
+#line li span{
+  width:100%;
+  display:block;
+  background:#2e2e2e;
+}
+#line li#big span{
+  height:6px;
+}
+#line li#middle span{
+  height:4px;
+}
+#line li#small span{
+  height:2px;
+}
