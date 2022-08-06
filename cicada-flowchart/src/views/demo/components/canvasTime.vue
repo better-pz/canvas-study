@@ -27,7 +27,7 @@ export default {
       scaleH: 35,
       moveLineH: 60,
       moveTextH: 75,
-      yearLists:[2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022],
+      yearLists:[2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],
       minutes_per_step: [
         1,
         2,
@@ -121,27 +121,27 @@ export default {
       let px_per_ms = this.canvansW / (this.hours_per_ruler * 60 * 60 * 1000); // px/ms
       let px_per_step = this.graduation_step; // px/格 默认最小值20px
       let min_per_step = px_per_step / px_per_min; // min/格
-      for (let i = 0; i < this.minutes_per_step.length; i++) {
-        if (min_per_step <= this.minutes_per_step[i]) {
-          //让每格时间在minutes_per_step规定的范围内
-          min_per_step = this.minutes_per_step[i];
-          px_per_step = px_per_min * min_per_step;
-          break;
-        }
-      }
+      // for (let i = 0; i < this.minutes_per_step.length; i++) {
+      //   if (min_per_step <= this.minutes_per_step[i]) {
+      //     //让每格时间在minutes_per_step规定的范围内
+      //     min_per_step = this.minutes_per_step[i];
+      //     px_per_step = px_per_min * min_per_step;
+      //     break;
+      //   }
+      // }
 
       let medium_step = 30;
-      for (let i = 0; i < this.minutes_per_step.length; i++) {
-        if (
-          this.distance_between_gtitle / px_per_min <=
-          this.minutes_per_step[i]
-        ) {
-          medium_step = this.minutes_per_step[i];
-          break;
-        }
-      }
+      // for (let i = 0; i < this.minutes_per_step.length; i++) {
+      //   if (
+      //     this.distance_between_gtitle / px_per_min <=
+      //     this.minutes_per_step[i]
+      //   ) {
+      //     medium_step = this.minutes_per_step[i];
+      //     break;
+      //   }
+      // }
 
-      let num_steps = this.canvansW / px_per_step; //总格数
+      let num_steps = this.canvansW /this.yearLists.length * 10; //总格数
       let graduation_left;
       let graduation_time;
       // let caret_class;
@@ -154,24 +154,28 @@ export default {
       let ms_per_step = px_per_step / px_per_ms; // ms/step
       console.log('num_steps',num_steps)
       for (let i = 0; i < num_steps; i++) {
+        // 每十个定义为标记年份节点
+        
         graduation_left = px_offset + i * px_per_step; // 距离=开始的偏移距离+格数*px/格
         graduation_time = start_timestamp + ms_offset + i * ms_per_step; //时间=左侧开始时间+偏移时间+格数*ms/格
+        console.log('graduation_time',graduation_time);
         let date = new Date(graduation_time);
 
-        if (date.getHours() == 0 && date.getMinutes() == 0) {
-          //判断零点
-          // caret_class = "big";
-          lineH = 35;
-          // let big_date = "00:00";
-          this.ctx.fillStyle = this.fontColor; //  0点 特殊 字体样式
-          // this.ctx.fillText(big_date, graduation_left, 50);
-        } else if ((graduation_time / (60 * 1000)) % medium_step == 0) {
+        // if (date.getHours() == 0 && date.getMinutes() == 0) {
+        //   //判断零点
+        //   // caret_class = "big";
+        //   lineH = 35;
+        //   // let big_date = "";
+        //   this.ctx.fillStyle = this.fontColor; //  0点 特殊 字体样式
+        //   // this.ctx.fillText(big_date, graduation_left, 50);
+        // } else 
+        if ((graduation_time / (60 * 1000)) % medium_step == 0) {
           // caret_class = "middle";
           lineH = 25;
           let middle_date = this.graduation_title(date);
           console.log('middle_date',middle_date)
 
-          // this.ctx.fillText(middle_date, graduation_left - 10, 50);
+          this.ctx.fillText(middle_date, graduation_left - 10, 50);
         } else {
           lineH = 15;
         }
