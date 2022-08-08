@@ -141,7 +141,8 @@ export default {
       //   }
       // }
 
-      let num_steps = this.canvansW /this.yearLists.length * 10; //总格数
+      console.log('this.canvansW ',this.canvansW )
+      let num_steps = this.canvansW /this.yearLists.length ; //总格数
       let graduation_left;
       let graduation_time;
       // let caret_class;
@@ -158,7 +159,7 @@ export default {
         
         graduation_left = px_offset + i * px_per_step; // 距离=开始的偏移距离+格数*px/格
         graduation_time = start_timestamp + ms_offset + i * ms_per_step; //时间=左侧开始时间+偏移时间+格数*ms/格
-        console.log('graduation_time',graduation_time);
+        // console.log('graduation_time',graduation_time);
         let date = new Date(graduation_time);
 
         // if (date.getHours() == 0 && date.getMinutes() == 0) {
@@ -173,7 +174,7 @@ export default {
           // caret_class = "middle";
           lineH = 25;
           let middle_date = this.graduation_title(date);
-          console.log('middle_date',middle_date)
+          // console.log('middle_date',middle_date)
 
           this.ctx.fillText(middle_date, graduation_left - 10, 50);
         } else {
