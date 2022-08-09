@@ -1,7 +1,7 @@
 <template>
   <div class="zrender">
     <div id="zrender-canvas"></div>
-    <canvasTime />
+    <canvasTime @changex="changex" />
   </div>
 </template>
 
@@ -15,6 +15,8 @@ export default {
     return {
       zr: null,
       group: null,
+      circle2: "",
+      circle: "",
     };
   },
   created() {},
@@ -32,7 +34,7 @@ export default {
       // 创建一个目标
       let circle = new zrender.Rect({
         shape: {
-           text: 'zrender',
+          text: "zrender",
           x: 100,
           y: 100,
           width: 200,
@@ -44,13 +46,14 @@ export default {
           lineWidth: 1, // 线宽， 默认1
         },
       });
+      this.circle = circle;
       let circle2 = new zrender.Rect({
         shape: {
-           text: 'zrender',
+          text: "zrender",
           x: 280,
           y: 100,
           width: 400,
-          height:40,
+          height: 40,
         },
         style: {
           fill: "yellow", // 填充颜色，默认#000
@@ -60,10 +63,10 @@ export default {
       });
       let root = new zrender.Rect({
         shape: {
-            x: 10,
-            y: 100,
-            width:50,
-            height: 400,
+          x: 10,
+          y: 100,
+          width: 50,
+          height: 400,
         },
         style: {
           fill: "red", // 填充颜色，默认#000
@@ -73,10 +76,10 @@ export default {
       });
       let root2 = new zrender.Rect({
         shape: {
-            x: 60,
-            y: 100,
-            width:50,
-            height: 200,
+          x: 60,
+          y: 100,
+          width: 50,
+          height: 200,
         },
         style: {
           fill: "green", // 填充颜色，默认#000
@@ -86,10 +89,10 @@ export default {
       });
       let root3 = new zrender.Rect({
         shape: {
-            x: 60,
-            y: 300,
-            width:50,
-            height: 200,
+          x: 60,
+          y: 300,
+          width: 50,
+          height: 200,
         },
         style: {
           fill: "#000", // 填充颜色，默认#000
@@ -97,33 +100,63 @@ export default {
           lineWidth: 1, // 线宽， 默认1
         },
       });
+
       // 添加圆到group里
       this.group.add(circle);
       this.group.add(root);
       this.group.add(root2);
       this.group.add(root3);
       this.group.add(circle2);
-      circle.on("mousedown",()=>this.clickDIv(circle,root));
-      root2.on("mousedown",()=>this.clickDIv(root2,root));
-      root3.on("mousedown",()=>this.clickDIv(root3,root));
-      circle2.on("mousedown",()=>this.clickDIv(circle2,root));
+      this.circle2 = circle2;
+      circle.on("mousedown", () => this.clickDIv(circle, root));
+      root2.on("mousedown", () => this.clickDIv(root2, root));
+      root3.on("mousedown", () => this.clickDIv(root3, root));
+      circle2.on("mousedown", () => this.clickDIv(circle2, root));
     },
-    clickDIv (circle,root) {
-       circle.animate('shape', false)
-          .when(300,  {
-            x: 10,
-            y: 100,
-            width:50,
-            height: 400,
+    changex(data) {
+      console.log("移动量", data, this.circle2);
+  
+      this.circle2
+        .animate("shape", false)
+        .when(1, {
+          x: this.circle2.shape.x - Math.abs(data),
+          y: 100,
         })
-        .done(function () {
-              // Animation done
-              console.log('动画结束',this.group)
-          })
-    .start()
-    
+        .done(function() {
+          // Animation done
+          console.log("动画结束", this.group);
+        })
+        .start();
+
+      this.circle
+        .animate("shape", false)
+        .when(1, {
+          x: this.circle.shape.x -  Math.abs(data),
+          y: 100,
+        })
+        .done(function() {
+          // Animation done
+          console.log("动画结束", this.group);
+        })
+        .start();
+    },
+    clickDIv(circle, root) {
+      circle
+        .animate("shape", false)
+        .when(300, {
+          x: 10,
+          y: 100,
+          width: 50,
+          height: 400,
+        })
+        .done(function() {
+          // Animation done
+          console.log("动画结束", this.group);
+        })
+        .start();
+
       this.group.remove(root);
-    }
+    },
   },
 };
 </script>
