@@ -240,8 +240,6 @@ export default {
      * 拖动/点击 mousedown事件
      */
     mousedownFunc(e) {
-      console.log('mousedown')
-
       this.g_isMousedown = true;
       this.g_mousedownCursor = this.get_cursor_x_position(e); //记住mousedown的位置
     },
@@ -249,7 +247,7 @@ export default {
      * 拖动/鼠标hover显示 mousemove事件
      */
     mousemoveFunc(e) {
-      console.log('mousemove',this.g_isMousedown)
+
       let pos_x = this.get_cursor_x_position(e);
       // let px_per_ms = this.canvansW / (this.hours_per_ruler * 60 * 60 * 1000); // px/ms
       this.clearCanvas();
@@ -263,7 +261,6 @@ export default {
         this.g_isMousemove = true;
         this.g_mousedownCursor = pos_x;
       } else {
-        console.log('this.g_isMousedown', this.g_isMousedown)
         // let time = this.start_timestamp + pos_x / px_per_ms;
         this.init(this.start_timestamp);
         // this.drawLine(
@@ -287,7 +284,7 @@ export default {
      * 拖动/点击 mouseup事件
      */
     mouseupFunc(e) {
-      console.log('mouseup')
+
 
       if (this.g_isMousemove) {
         //拖动 事件
@@ -311,8 +308,6 @@ export default {
     mouseoutFunc() {
       this.g_isMousemove = false;
       this.g_isMousedown = false;
-      console.log('mouseout' )
-
       this.clearCanvas();
       this.init(this.start_timestamp, this.timecell);
     },
