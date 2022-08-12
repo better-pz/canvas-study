@@ -309,7 +309,7 @@ export default {
       this.g_isMousemove = false;
       this.g_isMousedown = false;
       this.clearCanvas();
-      this.init(this.start_timestamp, this.timecell);
+      this.init(this.start_timestamp);
     },
 
     /**
@@ -325,9 +325,11 @@ export default {
 
       let e = window.event || event;
       let delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail));
+ 
       let middle_time =
         this.start_timestamp + (this.hours_per_ruler * 3600 * 1000) / 2; //ms 记住当前中间的时间
       if (delta < 0) {
+        // 缩小
         this.zoom = this.zoom + 4;
         if (this.zoom >= 24) {
           this.zoom = 24; //放大最大24小时
@@ -345,7 +347,7 @@ export default {
       this.clearCanvas();
       this.start_timestamp =
         middle_time - (this.hours_per_ruler * 3600 * 1000) / 2; //start_timestamp = 当前中间的时间 - zoom/2
-      this.init(this.start_timestamp, this.timecell);
+      this.init(this.start_timestamp);
     },
     /**
      * 获取鼠标posx
@@ -455,7 +457,7 @@ export default {
     set_time_to_middle(time) {
       this.clearCanvas();
       this.start_timestamp = time - (this.hours_per_ruler * 60 * 60 * 1000) / 2;
-      this.init(this.start_timestamp, this.timecell);
+      this.init(this.start_timestamp);
     },
     returnMouseupTime() {
       if (this.returnTime != null) {
