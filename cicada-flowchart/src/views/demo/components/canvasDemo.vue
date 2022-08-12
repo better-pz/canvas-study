@@ -2,25 +2,19 @@
   <div class="zrender">
     <div class="btn" @click="goBack">返回上一级</div>
     <div class="mian">
-      <transition>
-        <div
-          v-show="isShow"
-          class="root"
-          :style="`backgroundColor:${mainRoot.color}`"
-        >
-          {{ mainRoot.name }}
-        </div>
-      </transition>
+      <div style="width:100px;" id="root" ref="root" class="root"></div>
 
-      <div v-show="loading" >
-        <img class="loading" src="../../../../static/loading.gif" alt="" />
+      <div class="right">
+        <div v-show="loading">
+          <img class="loading" src="../../../../static/loading.gif" alt="" />
+        </div>
+        <div
+          v-show="!loading"
+          ref="canvas"
+          style="width:1000px;margin-left: 20px;"
+          id="zrender-canvas"
+        ></div>
       </div>
-      <div
-        v-show="!loading"
-        ref="canvas"
-        style="width:1000px;margin-left: 20px;"
-        id="zrender-canvas"
-      ></div>
     </div>
 
     <canvasTime @changex="changex" ref="time" />
@@ -29,6 +23,7 @@
 
 <script>
 import zrender from "zrender";
+// import { rotate } from "../../../../../zrender/lib/core/matrix";
 import canvasTime from "./canvasTime.vue";
 export default {
   name: "zrender",
@@ -38,14 +33,28 @@ export default {
       loading: false,
       isShow: true,
       zr: null,
+      rootR: null,
       group: null,
+      rootGroup: null,
       isChild: false,
       childrenColor: "pink",
-      mainRoot: { name: "多益", color: "red", level: 1 },
+      mainRoot: {
+        name: "多益",
+        color: "red",
+        level: 1,
+        width: 50,
+        height: 300,
+        y: 100,
+        x: 0,
+      },
       root: {
         name: "多益",
         color: "red",
         level: 1,
+        width: 50,
+        height: 300,
+        y: 100,
+        x: 0,
         children: [
           {
             name: "1",
@@ -75,7 +84,7 @@ export default {
                 level: 3,
               },
               {
-                name: "1.2",
+                name: "1.32",
                 x: 20,
                 y: 160,
                 width: 400,
@@ -84,7 +93,7 @@ export default {
                 level: 3,
               },
               {
-                name: "1.2",
+                name: "1.4",
                 x: 320,
                 y: 190,
                 width: 400,
@@ -192,21 +201,22 @@ export default {
           },
         ],
       },
-
     };
   },
   created() {},
   mounted() {
     this.init();
+    console.log(111, this.mainRoot);
+    this.initRoot(this.mainRoot);
   },
   methods: {
     goBack() {
-      console.log("返回上一级");
+      console.log("返回上一级", this.mainRoot.level);
       let obj = {};
       if (this.mainRoot.level == 2) {
         const props = { name: "多益", color: "red", level: 1 };
         obj = props;
-        this.clickDIv(obj);
+        this.clickDIv(obj, );
       } else if (this.mainRoot.level == 3) {
         console.log("层级", this.mainRoot.level);
         for (let item of this.root.children) {
@@ -214,11 +224,20 @@ export default {
             obj = item;
           }
         }
-        this.clickDIv(obj);
+        this.clickDIv(obj, "back");
       }
+    },
+    initRoot(mainRoot) {
+      this.rootR = zrender.init(document.getElementById("root"));
+      this.rootGroup = new zrender.Group();
+      console.log(111, mainRoot);
+
+      this.drawRoot(mainRoot);
+      this.rootR.add(this.rootGroup);
     },
     init() {
       this.zr = zrender.init(document.getElementById("zrender-canvas"));
+
       this.group = new zrender.Group();
       this.drawRect();
       this.zr.add(this.group);
@@ -233,7 +252,6 @@ export default {
       } else {
         // (function loop() {
         for (let item of self.root.children) {
-     
           if (self.mainRoot.name === item.name) {
             arr = item.children;
           } else {
@@ -245,70 +263,98 @@ export default {
       }
       console.log("渲染的数据", arr);
       if (arr.length === 0) {
-        let text = '暂无子级';
-        console.log(text);
-         let root = new zrender.Rect({
-          shape:{
-            x:100,
-            y:200,
-            height:100,
-            width:100
-          },
-           style: {
-              fill: '#fff', // 填充颜色，默认#000
-              lineWidth: 1, // 线宽， 默认1
-            },
-         })   .attr({
-            style: {
-              text: text,
-            },
-          });
-          this.group.add(root);
-
+        const props = {
+           x: 100,
+            y: 200,
+            height: 100,
+            width: 100,
+            color:'#fff',
+            name:'暂无子级'
+        }
+        let root = this.creatRoot(props)
+        this.group.add(root);
       } else {
         arr.forEach((item) => {
-          const { x, y, width, height, color,name } = item;
-          let root = new zrender.Rect({
-            data: item,
-            shape: {
-              x: x + 100,
-              y,
-              width,
-              height,
-            },
-            style: {
-              fill: color, // 填充颜色，默认#000
-              stroke: color, // 描边颜色，默认null
-              lineWidth: 1, // 线宽， 默认1
-            },
-          });
-          root.attr({
-            style: {
-              text: name,
-            },
-          });
+          // const { x, y, width, height, color, name } = item;
+          let root = this.creatRoot(item)
 
           root.on("mousedown", () => this.clickDIv(root.data));
           this.group.add(root);
         });
       }
     },
+    creatRoot(data) {
+      const { x, y, width, height, color, name } = data;
+      return new zrender.Rect({
+        data: data,
+        shape: {
+          x,
+          y,
+          width,
+          height,
+        },
+        style: {
+          fill: color, // 填充颜色，默认#000
+          stroke: color, // 描边颜色，默认null
+          lineWidth: 1, // 线宽， 默认1
+        },
+      }).attr({
+        style: {
+          text: name,
+        },
+      });
+    },
+    drawRoot(rootData, type) {
+      console.log("root", rootData, type);
+ 
+      let root = this.creatRoot(rootData)
+      // if (type !== "back") {
+        root.animateTo(
+          {
+            shape: {
+              width: 50,
+              height: 300,
+              y: 100,
+              x: 0,
+            },
+          },
+          function() {
+            // done
+          }
+        );
+      // }
+
+      // root.on("mousedown", () => this.clickDIv(root.data));
+      this.rootGroup.add(root);
+    },
     changex(data) {
       // console.log("更改时间轴距离", data);
       this.$refs.canvas.style.transform = `translateX(${data}px)`;
     },
 
-    clickDIv(root) {
-      console.log("点击", root);
+    clickDIv(root, type) {
+      this.rootGroup.removeAll();
+      this.$refs.root.style.width = "1000px";
+      var newRoot = JSON.parse(JSON.stringify(root)); 
+      if(type === 'back') {
+        newRoot.x=0
+        newRoot.y=100
+        newRoot.width=50
+        newRoot.height=300
+      }
+      this.initRoot(newRoot, type);
       this.mainRoot = root;
       this.group.removeAll();
-      this.init();
-      this.isShow = false;
+
       this.loading = true;
       setTimeout(() => {
         // this.zr.clear();
+        this.$refs.root.style.width = "100px";
+        this.rootR.resize({
+          with: 100,
+        });
         this.loading = false;
-        this.isShow = true;
+        // this.isShow = true;
         this.drawRect();
       }, 600);
     },
@@ -321,15 +367,20 @@ export default {
   display: flex;
   margin: 10px;
   height: 700px;
+  width: 1000px;
   position: relative;
   overflow: hidden;
 }
 .root {
   position: absolute;
-  top: 100px;
+  /* top: 100px; */
+  left: 0;
   width: 50px;
-  height: 300px;
+  height: 700px;
+
   z-index: 9999;
+
+  /* transition: all 0.3s linear; */
 }
 .loading {
   margin: 100px 200px;
@@ -349,24 +400,24 @@ export default {
 }
 #zrender-canvas {
   height: 700px;
+  z-index: 88;
   /* transition: all 0.1s linear; */
 }
 
 @keyframes donghua {
   from {
-    width: 100px;
+    width: 400px;
     height: 20px;
-    left: 100px;
+    left: 120px;
   }
   to {
     width: 50px;
-     height: 300px;
+    height: 300px;
     left: 20px;
-
   }
 }
 .v-enter-active {
-  animation: donghua 0.2s linear;
+  animation: donghua 0.4s linear;
 }
 
 /* @keyframes donghua {
