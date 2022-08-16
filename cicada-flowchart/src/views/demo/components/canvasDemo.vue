@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <canvasTime @changex="changex" ref="time" />
+    <canvasTime @changex="changex" ref="time" @changeWidth="changeWidth" />
   </div>
 </template>
 
@@ -37,6 +37,7 @@ export default {
       group: null,
       rootGroup: null,
       isChild: false,
+      widthBase: null, // 定义宽度基数
       childrenColor: "pink",
       mainRoot: {
         name: "多益",
@@ -61,6 +62,7 @@ export default {
             x: 20,
             y: 100,
             width: 400,
+            time: 2,
             height: 20,
             color: "pink",
             level: 2,
@@ -109,11 +111,13 @@ export default {
             y: 100,
             width: 400,
             height: 20,
+            time: 2,
             level: 2,
             color: "yellow",
             children: [
               {
                 name: "2.1",
+                time: 2,
                 x: 20,
                 y: 100,
                 width: 400,
@@ -124,6 +128,7 @@ export default {
               {
                 name: "2.2",
                 x: 120,
+                time: 2,
                 y: 130,
                 width: 400,
                 height: 20,
@@ -138,11 +143,13 @@ export default {
             y: 130,
             width: 400,
             level: 2,
+            time: 2,
             height: 20,
             color: "yellow",
             children: [
               {
                 name: "3.1",
+                time: 2,
                 x: 20,
                 y: 100,
                 width: 400,
@@ -153,6 +160,7 @@ export default {
               {
                 name: "3.2",
                 x: 120,
+                time: 2,
                 y: 130,
                 width: 400,
                 height: 20,
@@ -165,6 +173,7 @@ export default {
             name: "4",
             x: 120,
             y: 160,
+            time: 2,
             width: 800,
             height: 20,
             level: 2,
@@ -174,6 +183,7 @@ export default {
                 name: "4.1",
                 x: 20,
                 y: 100,
+                time: 2,
                 width: 400,
                 height: 20,
                 color: "yellow",
@@ -182,6 +192,7 @@ export default {
               {
                 name: "4.2",
                 x: 120,
+                time: 2,
                 y: 130,
                 width: 400,
                 height: 20,
@@ -191,6 +202,7 @@ export default {
               {
                 name: "4.3",
                 x: 80,
+                time: 2,
                 y: 160,
                 width: 200,
                 height: 20,
@@ -204,6 +216,13 @@ export default {
     };
   },
   created() {},
+  computed: {
+    dynamicWidth() {
+      return function(val) {
+        return val * this.widthBase;
+      };
+    },
+  },
   mounted() {
     this.init();
     console.log(111, this.mainRoot);
@@ -216,7 +235,7 @@ export default {
       if (this.mainRoot.level == 2) {
         const props = { name: "多益", color: "red", level: 1 };
         obj = props;
-        this.clickDIv(obj, );
+        this.clickDIv(obj);
       } else if (this.mainRoot.level == 3) {
         console.log("层级", this.mainRoot.level);
         for (let item of this.root.children) {
@@ -264,20 +283,18 @@ export default {
       console.log("渲染的数据", arr);
       if (arr.length === 0) {
         const props = {
-           x: 100,
-            y: 200,
-            height: 100,
-            width: 100,
-            color:'#fff',
-            name:'暂无子级'
-        }
-        let root = this.creatRoot(props)
+          x: 100,
+          y: 200,
+          height: 100,
+          width: 100,
+          color: "#fff",
+          name: "暂无子级",
+        };
+        let root = this.creatRoot(props);
         this.group.add(root);
       } else {
         arr.forEach((item) => {
-          // const { x, y, width, height, color, name } = item;
-          let root = this.creatRoot(item)
-
+          let root = this.creatRoot(item);
           root.on("mousedown", () => this.clickDIv(root.data));
           this.group.add(root);
         });
@@ -306,41 +323,57 @@ export default {
     },
     drawRoot(rootData, type) {
       console.log("root", rootData, type);
- 
-      let root = this.creatRoot(rootData)
+
+      let root = this.creatRoot(rootData);
       // if (type !== "back") {
-        root.animateTo(
-          {
-            shape: {
-              width: 50,
-              height: 300,
-              y: 100,
-              x: 0,
-            },
+      root.animateTo(
+        {
+          shape: {
+            width: 50,
+            height: 300,
+            y: 100,
+            x: 0,
           },
-          function() {
-            // done
-          }
-        );
+        },
+        function() {
+          // done
+        }
+      );
       // }
 
       // root.on("mousedown", () => this.clickDIv(root.data));
       this.rootGroup.add(root);
     },
     changex(data) {
-      // console.log("更改时间轴距离", data);
-      this.$refs.canvas.style.transform = `translateX(${data}px)`;
+      console.log("更改时间轴距离", data);
+      if (data < 0) this.$refs.canvas.style.transform = `translateX(${data}px)`;
     },
-
+    changeWidth(data) {
+      console.log("改变宽度", data, this.group);
+      this.widthBase = data;
+      this.group._children.forEach((val) => {
+        console.log("获取每个元素", val);
+        val.animateTo(
+          {
+            shape: {
+              width: this.widthBase * val.data.time,
+            },
+          },
+          function() {
+            // done
+          }
+        );
+      });
+    },
     clickDIv(root, type) {
       this.rootGroup.removeAll();
       this.$refs.root.style.width = "1000px";
-      var newRoot = JSON.parse(JSON.stringify(root)); 
-      if(type === 'back') {
-        newRoot.x=0
-        newRoot.y=100
-        newRoot.width=50
-        newRoot.height=300
+      var newRoot = JSON.parse(JSON.stringify(root));
+      if (type === "back") {
+        newRoot.x = 0;
+        newRoot.y = 100;
+        newRoot.width = 50;
+        newRoot.height = 300;
       }
       this.initRoot(newRoot, type);
       this.mainRoot = root;

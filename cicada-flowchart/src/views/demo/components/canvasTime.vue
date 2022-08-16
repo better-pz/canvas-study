@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name:'canvasdemo',
+  name: "canvasdemo",
   data() {
     return {
       canvas: "",
@@ -20,15 +20,17 @@ export default {
       canvansW: "",
       canvansH: "",
       timecell: [],
+      yearWidth:0,// 每一年的宽度
       canvasColors: ["rgba(249,97,89,1)", "rgba(55,202,65,0.8)"],
       scaleLineCorols: "#E6E6E6", // 刻度线颜色
       fontColor: "#5C5C5C", // 字体颜色
       axisColor: "#1989FA", // 中轴线
       moveLineColor: "#000000",
       scaleH: 35,
+      medium_step: 2, //定义一大格中间的小格数量
       moveLineH: 60,
       moveTextH: 75,
-      yearLists: [ 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,2022],
+      yearLists: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022],
       minutes_per_step: [
         1,
         2,
@@ -49,13 +51,20 @@ export default {
       hours_per_ruler: 24, //时间轴显示24小时
       start_timestamp: 20, // 渲染刻度开始时间
       distance_between_gtitle: 80,
-      zoom: 24,
+      zoom: 2,
+      basePx: 1.5, // 每格像素的的距离
       g_isMousedown: false, //拖动mousedown标记
       g_isMousemove: false, //拖动mousemove标记
       g_mousedownCursor: null, //拖动mousedown的位置
       returnTime: null, //mouseup返回时间
     };
   },
+  watch: {
+      yearWidth(yearWidth){
+        // window.console.log(this.isChange,newvalue,+new Date());
+      this.$emit('changeWidth',yearWidth)
+      }
+    },
   mounted() {
     this.canvas = document.getElementById("timeline");
     this.ctx = this.canvas.getContext("2d");
@@ -122,68 +131,30 @@ export default {
      * 绘制添加刻度
      */
     add_graduations(start_timestamp) {
-      // let px_per_min = this.canvansW / (this.hours_per_ruler * 60); // px/min
-      // let px_per_ms = this.canvansW / (this.hours_per_ruler * 60 * 60 * 1000); // px/ms
-      let px_per_ms =1
+      let px_per_ms =1 ;
       let px_per_step = this.graduation_step; // px/格 默认最小值20px
-      // let min_per_step = px_per_step / px_per_min; // min/格
-      // for (let i = 0; i < this.minutes_per_step.length; i++) {
-      //   if (min_per_step <= this.minutes_per_step[i]) {
-      //     //让每格时间在minutes_per_step规定的范围内
-      //     min_per_step = this.minutes_per_step[i];
-      //     px_per_step = px_per_min * min_per_step;
-      //     break;
-      //   }
-      // }
-
-      let medium_step = 10;
-      // for (let i = 0; i < this.minutes_per_step.length; i++) {
-      //   if (
-      //     this.distance_between_gtitle / px_per_min <=
-      //     this.minutes_per_step[i]
-      //   ) {
-      //     medium_step = this.minutes_per_step[i];
-      //     break;
-      //   }
-      // }
-
-      // console.log("this.canvansW ", this.canvansW);
-      let num_steps =10 * (this.yearLists.length -1 ); //总格数
+      let num_steps = this.medium_step * (this.yearLists.length - 1); //总格数
       let graduation_left;
-      // let graduation_time;
-      // let caret_class;
+   
       let lineH; // 刻度线高度
-      //开始的偏移时间 ms
-      // let ms_offset = this.ms_to_next_step(
-      //   start_timestamp,20
-      // ); 
-      let ms_offset = start_timestamp
+   
+
+      let ms_offset = start_timestamp;
       let px_offset = ms_offset * px_per_ms; //开始的偏移距离 px
-      // let ms_per_step = px_per_step / px_per_ms; // ms/step
-      // console.log('偏移量',ms_offset);
+      if (px_offset > 20) {
+        px_offset = 20;
+      }
+
+      // 一年的距离
+      this.yearWidth = this.medium_step *  this.graduation_step* this.basePx
+      console.log("一年的距离",this.yearWidth);
+
       for (let i = 0; i < num_steps; i++) {
         // 每十个定义为标记年份节点
-
-        graduation_left = px_offset + i * px_per_step; // 距离=开始的偏移距离+格数*px/格
-        // console.log('偏移量计算',graduation_left)
-        // graduation_time = start_timestamp + ms_offset + i * ms_per_step; //时间=左侧开始时间+偏移时间+格数*ms/格
-        // console.log('graduation_time',graduation_time);
-        // let date = new Date(graduation_time);
-
-        // if (date.getHours() == 0 && date.getMinutes() == 0) { 
-        //   //判断零点
-        //   // caret_class = "big";
-        //   lineH = 35;
-        //   // let big_date = "";
-        //   this.ctx.fillStyle = this.fontColor; //  0点 特殊 字体样式
-        //   // this.ctx.fillText(big_date, graduation_left, 50);
-        // } else
-        // if ((graduation_time / (60 * 1000)) % medium_step == 0) {
-        if (i % medium_step == 0) {
-          // caret_class = "middle";
+        graduation_left = px_offset + i * px_per_step *this.basePx; // 距离=开始的偏移距离+格数*px/格
+        if (i % this.medium_step == 0) {
           lineH = 25;
-          // let time = this.graduation_title(date);
-          let time = this.yearLists[i / 10];
+          let time = this.yearLists[i / this.medium_step];
           this.ctx.fillText(time, graduation_left - 10, 50);
         } else {
           lineH = 15;
@@ -247,45 +218,44 @@ export default {
      * 拖动/鼠标hover显示 mousemove事件
      */
     mousemoveFunc(e) {
-
+      console.log('111111111');
       let pos_x = this.get_cursor_x_position(e);
       // let px_per_ms = this.canvansW / (this.hours_per_ruler * 60 * 60 * 1000); // px/ms
-      this.clearCanvas();
+    
       if (this.g_isMousedown) {
+          this.clearCanvas();
         let diff_x = pos_x - this.g_mousedownCursor; // 记录移动的位置
-        this.start_timestamp =
-          this.start_timestamp + Math.round(diff_x );
+        this.start_timestamp = this.start_timestamp + Math.round(diff_x);
         // console.log('移动的距离',this.start_timestamp)
-        this.$emit('changex',this.start_timestamp)
+        this.$emit("changex", this.start_timestamp);
         this.init(this.start_timestamp);
         this.g_isMousemove = true;
         this.g_mousedownCursor = pos_x;
-      } else {
-        // let time = this.start_timestamp + pos_x / px_per_ms;
-        this.init(this.start_timestamp);
-        // this.drawLine(
-        //   pos_x,
-        //   0,
-        //   pos_x,
-        //   this.moveLineH + 10,
-        //   this.moveLineColor,
-        //   1
-        // ); // 鼠标移动的线
-        // this.ctx.fillStyle = this.moveLineColor; // 鼠标移动时候的文字
-        // // console.log(changeTime(time))
-        // this.ctx.fillText(
-        //   this.changeTime(time),
-        //   pos_x - 50,
-        //   this.moveTextH + 10
-        // );
-      }
+      } 
+      // else {
+      //   // let time = this.start_timestamp + pos_x / px_per_ms;
+      //   this.init(this.start_timestamp);
+      //   // this.drawLine(
+      //   //   pos_x,
+      //   //   0,
+      //   //   pos_x,
+      //   //   this.moveLineH + 10,
+      //   //   this.moveLineColor,
+      //   //   1
+      //   // ); // 鼠标移动的线
+      //   // this.ctx.fillStyle = this.moveLineColor; // 鼠标移动时候的文字
+      //   // // console.log(changeTime(time))
+      //   // this.ctx.fillText(
+      //   //   this.changeTime(time),
+      //   //   pos_x - 50,
+      //   //   this.moveTextH + 10
+      //   // );
+      // }
     },
     /**
      * 拖动/点击 mouseup事件
      */
     mouseupFunc(e) {
-
-
       if (this.g_isMousemove) {
         //拖动 事件
         this.g_isMousemove = false;
@@ -306,10 +276,10 @@ export default {
      * @param {*} e
      */
     mouseoutFunc() {
-      this.g_isMousemove = false;
-      this.g_isMousedown = false;
-      this.clearCanvas();
-      this.init(this.start_timestamp);
+      // this.g_isMousemove = false;
+      // this.g_isMousedown = false;
+      // this.clearCanvas();
+      // this.init(this.start_timestamp);
     },
 
     /**
@@ -325,28 +295,34 @@ export default {
 
       let e = window.event || event;
       let delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail));
- 
-      let middle_time =
-        this.start_timestamp + (this.hours_per_ruler * 3600 * 1000) / 2; //ms 记住当前中间的时间
-      if (delta < 0) {
+
+      // let middle_time =
+      //   this.start_timestamp + (this.hours_per_ruler * 3600 * 1000) / 2; //ms 记住当前中间的时间
+      if (delta > 0) {
         // 缩小
-        this.zoom = this.zoom + 4;
-        if (this.zoom >= 24) {
-          this.zoom = 24; //放大最大24小时
+        this.basePx = this.basePx + 0.2;
+        this.zoom++;
+        if (this.zoom >= 12) {
+          this.zoom = 12; //放大最大12个月
         }
-        this.hours_per_ruler = this.zoom;
-      } else if (delta > 0) {
+      } else if (delta < 0) {
         // 放大
-        this.zoom = this.zoom - 4;
-        if (this.zoom <= 1) {
-          this.zoom = 1; //缩小最小1小时
+        this.zoom--;
+        this.basePx = this.basePx - 0.2;
+        if (this.zoom <= 2) {
+          this.zoom = 2; //缩小最小2个月
         }
-        this.hours_per_ruler = this.zoom;
+    
       }
 
+      if (this.zoom % 2 === 0) {
+        this.medium_step = this.zoom;
+        this.basePx = 1.5; 
+
+      }
       this.clearCanvas();
-      this.start_timestamp =
-        middle_time - (this.hours_per_ruler * 3600 * 1000) / 2; //start_timestamp = 当前中间的时间 - zoom/2
+      // this.start_timestamp =
+      //   middle_time - (this.hours_per_ruler * 3600 * 1000) / 2; //start_timestamp = 当前中间的时间 - zoom/2
       this.init(this.start_timestamp);
     },
     /**
@@ -440,12 +416,10 @@ export default {
      * @param {*} timestamp
      * @param {*} step
      */
-    ms_to_next_step(timestamp, ) {
-
+    ms_to_next_step(timestamp) {
       // let index = this.yearLists.findIndex(item => item === timestamp) +1
       // console.log(888888888,timestamp,index)
 
-      
       return timestamp;
       // let remainder = timestamp % step;
       // return remainder ? step - remainder : 0;
