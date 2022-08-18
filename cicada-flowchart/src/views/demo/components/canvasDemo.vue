@@ -63,6 +63,7 @@ export default {
             y: 100,
             width: 400,
             time: 2,
+            startTime: 1,
             height: 20,
             color: "pink",
             level: 2,
@@ -70,6 +71,8 @@ export default {
               {
                 name: "1.1",
                 x: 20,
+                time: 2,
+                startTime: 2,
                 y: 100,
                 width: 400,
                 height: 20,
@@ -79,6 +82,8 @@ export default {
               {
                 name: "1.2",
                 x: 120,
+                time: 2,
+                startTime: 4,
                 y: 130,
                 width: 400,
                 height: 20,
@@ -88,6 +93,8 @@ export default {
               {
                 name: "1.32",
                 x: 20,
+                time: 2,
+                startTime:3,
                 y: 160,
                 width: 400,
                 height: 20,
@@ -97,6 +104,8 @@ export default {
               {
                 name: "1.4",
                 x: 320,
+                time: 2,
+                startTime: 1,
                 y: 190,
                 width: 400,
                 height: 20,
@@ -112,12 +121,14 @@ export default {
             width: 400,
             height: 20,
             time: 2,
+            startTime: 5,
             level: 2,
             color: "yellow",
             children: [
               {
                 name: "2.1",
                 time: 2,
+                startTime: 1,
                 x: 20,
                 y: 100,
                 width: 400,
@@ -129,6 +140,7 @@ export default {
                 name: "2.2",
                 x: 120,
                 time: 2,
+                startTime: 1,
                 y: 130,
                 width: 400,
                 height: 20,
@@ -144,12 +156,14 @@ export default {
             width: 400,
             level: 2,
             time: 2,
+            startTime: 6,
             height: 20,
             color: "yellow",
             children: [
               {
                 name: "3.1",
                 time: 2,
+                startTime: 1,
                 x: 20,
                 y: 100,
                 width: 400,
@@ -161,6 +175,7 @@ export default {
                 name: "3.2",
                 x: 120,
                 time: 2,
+                startTime: 1,
                 y: 130,
                 width: 400,
                 height: 20,
@@ -174,6 +189,7 @@ export default {
             x: 120,
             y: 160,
             time: 2,
+            startTime: 3,
             width: 800,
             height: 20,
             level: 2,
@@ -184,6 +200,7 @@ export default {
                 x: 20,
                 y: 100,
                 time: 2,
+                startTime: 1,
                 width: 400,
                 height: 20,
                 color: "yellow",
@@ -193,6 +210,7 @@ export default {
                 name: "4.2",
                 x: 120,
                 time: 2,
+                startTime: 1,
                 y: 130,
                 width: 400,
                 height: 20,
@@ -203,6 +221,7 @@ export default {
                 name: "4.3",
                 x: 80,
                 time: 2,
+                startTime: 1,
                 y: 160,
                 width: 200,
                 height: 20,
@@ -300,14 +319,16 @@ export default {
         });
       }
     },
+    // 创建一个canvas元素
     creatRoot(data) {
-      const { x, y, width, height, color, name } = data;
+      const { startTime, y, height, color, name, time } = data;
+      console.log;
       return new zrender.Rect({
         data: data,
         shape: {
-          x,
+          x: this.widthBase * startTime,
           y,
-          width,
+          width: this.widthBase * time,
           height,
         },
         style: {
@@ -356,6 +377,7 @@ export default {
         val.animateTo(
           {
             shape: {
+              x: this.widthBase * val.data.startTime,
               width: this.widthBase * val.data.time,
             },
           },
