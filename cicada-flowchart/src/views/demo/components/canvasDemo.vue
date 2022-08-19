@@ -94,7 +94,7 @@ export default {
                 name: "1.32",
                 x: 20,
                 time: 2,
-                startTime:3,
+                startTime: 3,
                 y: 160,
                 width: 400,
                 height: 20,
@@ -288,18 +288,13 @@ export default {
       if (this.mainRoot.level == 1) {
         arr = this.root.children;
       } else {
-        // (function loop() {
         for (let item of self.root.children) {
           if (self.mainRoot.name === item.name) {
             arr = item.children;
-          } else {
-            // loop();
           }
-          console.log(33333, arr);
         }
         // })();
       }
-      console.log("渲染的数据", arr);
       if (arr.length === 0) {
         const props = {
           x: 100,
@@ -344,9 +339,7 @@ export default {
     },
     drawRoot(rootData, type) {
       console.log("root", rootData, type);
-
       let root = this.creatRoot(rootData);
-      // if (type !== "back") {
       root.animateTo(
         {
           shape: {
@@ -360,9 +353,6 @@ export default {
           // done
         }
       );
-      // }
-
-      // root.on("mousedown", () => this.clickDIv(root.data));
       this.rootGroup.add(root);
     },
     changex(data) {
@@ -370,10 +360,8 @@ export default {
       if (data < 0) this.$refs.canvas.style.transform = `translateX(${data}px)`;
     },
     changeWidth(data) {
-      console.log("改变宽度", data, this.group);
       this.widthBase = data;
       this.group._children.forEach((val) => {
-        console.log("获取每个元素", val);
         val.animateTo(
           {
             shape: {
@@ -389,21 +377,27 @@ export default {
     },
     clickDIv(root, type) {
       this.rootGroup.removeAll();
+      // 更改根节点的canvas节点的宽度
       this.$refs.root.style.width = "1000px";
       var newRoot = JSON.parse(JSON.stringify(root));
+      // 返回上一级的处理
       if (type === "back") {
         newRoot.x = 0;
         newRoot.y = 100;
         newRoot.width = 50;
         newRoot.height = 300;
       }
+      // 更新绘制根节点(在点击的元素的地方先绘制一个元素,在动画移动到根节点的估计位置)
       this.initRoot(newRoot, type);
+      //更改当前主节点
       this.mainRoot = root;
+      // 移除现有的节点元素
       this.group.removeAll();
 
       this.loading = true;
       setTimeout(() => {
         // this.zr.clear();
+        // 更新完之后将左边canvas的宽度更改为原来大小,避免遮挡右边的canvas
         this.$refs.root.style.width = "100px";
         this.rootR.resize({
           with: 100,
