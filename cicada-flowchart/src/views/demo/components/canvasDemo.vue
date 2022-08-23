@@ -361,6 +361,8 @@ export default {
     },
     changeWidth(data) {
       this.widthBase = data;
+      console.log(222222222,data)
+
       this.group._children.forEach((val) => {
         val.animateTo(
           {

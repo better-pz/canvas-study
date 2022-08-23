@@ -43,6 +43,7 @@ export default {
   },
   watch: {
       yearWidth(yearWidth){
+      console.log(1111,yearWidth)
       this.$emit('changeWidth',yearWidth)
       }
     },
